@@ -1,5 +1,4 @@
 Old_Labels,New_Labels
-Activity,Activity
 tBodyAcc.mean...X,T_Acc_Mean_X
 tBodyAcc.mean...Y,T_Acc_Mean_Y
 tBodyAcc.mean...Z,T_Acc_Mean_Z
