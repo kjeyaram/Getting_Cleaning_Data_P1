@@ -18,7 +18,9 @@ Xdata <- rbind(Xtest,Xtrain)
 Ydata <- rbind(Ytest,Ytrain)
 Subjdata <- rbind(Subjtest,Subjtrain)
 
-## Assign column names using the Features, Activity and Subject files
+## Xdata has the various measurements and is assigned column names using the 
+## data from Features.txt file
+## The columns in Y and Subject are named "Activity" and "Subject" respectively
 
 colnames(Xdata) <- Features$V2
 colnames(Ydata) <- "Activity"
@@ -38,6 +40,7 @@ HAR_Data <- data.frame(cbind(X_Mean, X_Std,Ydata,Subjdata))
 Act_Lab <- read.table("./activity_labels.txt")
 colnames(Act_Lab) <- c("Activity","ActivityName")
 HAR <- merge(HAR_Data,Act_Lab,by.x="Activity",by.y="Activity",all=TRUE)
+HAR$Activity <- NULL
 
 ## In order to create more meaningful column names, first download the 
 ## current column names to a .csv file in the working directory
@@ -70,3 +73,8 @@ NewLabels <- read.table("./NewColNames.csv", sep=",", header=TRUE)
 ## Assign the new labels as column names to HAR dataset
 colnames(HAR) <- NewLabels$New_Labels
 
+HAR$Act_Subj <- paste(HAR$ActivityName,HAR$Subject)
+
+HARMelt <- melt(HAR,id=c("Act_Subj"),measure.vars=c('T_Acc_Mean_X','T_Acc_Mean_Y','T_Acc_Mean_Z','T_Gravity_Acc_Mean_X','T_Gravity_Acc_Mean_Y','T_Gravity_Acc_Mean_Z','T_Acc_Jerk_Mean_X','T_Acc_Jerk_Mean_Y','T_Acc_Jerk_Mean_Z','T_Gyro_Mean_X','T_Gyro_Mean_Y','T_Gyro_Mean_Z','T_Gyro_Jerk_Mean_X','T_Gyro_Jerk_Mean_Y','T_Gyro_Jerk_Mean_Z','T_Acc_Mean','T_Gravity_Acc_Mean','T_Acc_Jerk_Mean','T_Gyro_Mean','T_Gyro_Jerk_Mean','F_Acc_Mean_X','F_Acc_Mean_Y','F_Acc_Mean_Z','F_Acc_MeanFreq_X','F_Acc_MeanFreq_Y','F_Acc_MeanFreq_Z','F_Acc_Jerk_Mean_X','F_Acc_Jerk_Mean_Y','F_Acc_Jerk_Mean_Z','F_Acc_Jerk_Meanfreq_X','F_Acc_Jerk_MeanFreq_Y','F_Acc_Jerk_MeanFreq_Z','F_Gyro_Mean_X','F_Gyro_Mean_Y','F_Gyro_Mean_Z','F_Gyro_MeanFreq_X','F_Gyro_MeanFreq_Y','F_Gyro_MeanFreq_Z','F_Acc_Mean','F_Acc_MeanFreq','F_Acc_Jerk_Mean','F_Acc_Jerk_MeanFreq','F_Gyro_Mean','F_Gyro_MeanFreq','F_Gyro_Jerk_Mean','F_Gyro_Jerk_MeanFreq','T_Acc_Std_X','T_Acc_Std_Y','T_Acc_Std_Z','T_Gravity_Acc_Std_X','T_Gravity_Acc_Std_Y','T_Gravity_Acc_Std_Z','T_Acc_Jerk_Std_X','T_Acc_Jerk_Std_Y','T_Acc_Jerk_Std_Z','T_Gyro_Std_X','T_Gyro_Std_Y','T_Gyro_Std_Z','T_Gyro_Jerk_Std_X','T_Gyro_Jerk_Std_Y','T_Gyro_Jerk_Std_Z','T_Acc_Std','T_Gravity_Acc_STD','T_Acc_Jerk_Std','T_Gyro_Std','T_Gyro_Jerk_Std','F_Acc_Std_X','F_Acc_Std_Y','F_Acc_Std_Z','F_Acc_Jerk_Std_X','F_Acc_Jerk_Std_Y','F_Acc_Jerk_Std_Z','F_Gyro_Std_X','F_Gyro_Std_Y','F_Gyro_Std_Z','F_Acc_Std','F_Acc_Jerk_Std','F_Gyro_Std','F_Gyro_Jerk_Std'))
+
+Final <- dcast(HARMelt,Act_Subj ~ variable, mean)
